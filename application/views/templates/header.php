@@ -14,13 +14,19 @@
         }
 
         .content {
-            min-height: 100%;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
 
         .main-content {
             flex: 1;
+            /* Pushes footer to the bottom for short content */
+        }
+
+        .news-content {
+            margin: 0;
+            padding: 0;
         }
 
         footer {
@@ -28,9 +34,6 @@
             color: white;
             text-align: center;
             padding: 20px 0;
-            position: relative;
-            bottom: 0;
-            width: 100%;
         }
     </style>
 </head>

@@ -28,29 +28,41 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo site_url('about'); ?>">About</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo site_url('contact'); ?>">Contact</a>
-                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
 
+
         <div class="container my-5">
+            <h1 class="text-center mb-4">Contact Us</h1>
             <div class="row">
-                <div class="col-md-12">
-                    <h1 class="display-4 text-center"><?php echo $news_item['title']; ?></h1>
-                    <p class="text-muted text-center">Published on: <span>Date</span></p>
-                    <hr>
-                    <img src="https://via.placeholder.com/800x400" class="img-fluid rounded mb-4" alt="News Image">
-                    <div class="news-content">
-                        <p><?php echo nl2br($news_item['text']); ?></p>
-                    </div>
-                    <hr>
-                    <div class="d-flex justify-content-between">
-                        <a href="<?php echo site_url('news'); ?>" class="btn btn-secondary">Back to News</a>
-                        <button class="btn btn-primary">Share</button>
-                    </div>
+                <div class="col-md-6">
+                    <h4>Get in Touch</h4>
+                    <p>If you have any queries, suggestions, or need assistance, feel free to reach out. We'd love to hear from you!</p>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-envelope"></i> Email: contact@newssite.com</li>
+                        <li><i class="bi bi-telephone"></i> Phone: +123 456 789</li>
+                        <li><i class="bi bi-geo-alt"></i> Address: 123 News Avenue, Media City</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Send a Message</h4>
+                    <form>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" rows="4" placeholder="Your message"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
                 </div>
             </div>
         </div>

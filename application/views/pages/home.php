@@ -1,19 +1,25 @@
 <div class="content">
     <div class="main-content">
         <!-- Navigation Bar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">NewsSite</a>
+                <a class="navbar-brand" href="<?php echo site_url('home'); ?>">NewsSite</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link" href="<?php echo site_url('about'); ?>">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?php echo site_url('about'); ?>">About</a>
+                            <a class="nav-link" href="<?php echo site_url('news/create'); ?>">Create News</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">world</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Business</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Technology</a>
@@ -22,7 +28,7 @@
                             <a class="nav-link" href="#">Sports</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Contact</a>
+                            <a class="nav-link" href="<?php echo site_url('contact'); ?>">Contact</a>
                         </li>
                     </ul>
                 </div>

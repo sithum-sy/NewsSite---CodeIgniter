@@ -5,7 +5,7 @@ class Pages extends CI_Controller
     {
         parent::__construct();
         $this->load->model('News_model');
-        $this->load->helper('url');  // Load the URL helper
+        $this->load->helper('url');
     }
 
     public function view($page = 'home')
