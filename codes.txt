@@ -1,3 +1,5 @@
 Start a project - composer create-project codeigniter/framework your_project_name 3.1.13
 
 Configure the base_url in application/config/config.php: $config['base_url'] = 'http://localhost/your_project_name/';
+
+folder structure

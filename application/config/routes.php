@@ -52,6 +52,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $route['home'] = 'pages/view/home';
 $route['about'] = 'pages/view/about';
 $route['contact'] = 'pages/view/contact';
+$route['login'] = 'pages/view/login';
+$route['logout'] = 'users/logout';
+
+
+$route['dashboard'] = 'pages/view/admin-dashboard';
+$route['register'] = 'pages/view/register';
 
 $route['news/create'] = 'news/create';
 $route['news/(:any)'] = 'news/view/$1';

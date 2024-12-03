@@ -42,10 +42,8 @@
                    <div class="col-md-8 offset-md-2">
                        <h2 class="text-center"><?php echo $title; ?></h2>
 
-                       <!-- Display Validation Errors -->
                        <?php echo validation_errors(); ?>
 
-                       <!-- News Form -->
                        <?php echo form_open('news/create'); ?>
                        <div class="mb-3">
                            <label for="title" class="form-label">Title</label>

@@ -16,7 +16,7 @@
                             <a class="nav-link" href="<?php echo site_url('news/create'); ?>">Create News</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">world</a>
+                            <a class="nav-link" href="#">World</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Business</a>
@@ -29,6 +29,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo site_url('contact'); ?>">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?php echo site_url('login'); ?>">Login/Register</a>
                         </li>
                     </ul>
                 </div>

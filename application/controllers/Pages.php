@@ -6,6 +6,7 @@ class Pages extends CI_Controller
         parent::__construct();
         $this->load->model('News_model');
         $this->load->helper('url');
+        $this->load->library('session');
     }
 
     public function view($page = 'home')
@@ -16,7 +17,8 @@ class Pages extends CI_Controller
         }
 
         $data['news'] = $this->News_model->get_news();
-        $data['title'] = ucfirst(($page));
+        // $data['title'] = ucfirst(($page));
+
 
         $this->load->view('templates/header', $data);
         $this->load->view('pages/' . $page, $data);
