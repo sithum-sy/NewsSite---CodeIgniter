@@ -2,7 +2,15 @@
     <div class="main-content">
         <div class="container mt-5">
             <h2 class="mb-4">Register a New User</h2>
-            <form action="/register_user" method="POST">
+            <?php if (validation_errors()): ?>
+                <div class="alert alert-danger"><?= validation_errors() ?></div>
+            <?php endif; ?>
+
+            <?php if ($this->session->flashdata('error')): ?>
+                <div class="alert alert-danger"><?= $this->session->flashdata('error') ?></div>
+            <?php endif; ?>
+
+            <form action="<?php echo site_url('registerUser'); ?>" method="POST">
                 <div class="mb-3">
                     <label for="first_name" class="form-label">First Name</label>
                     <input type="text" class="form-control" id="first_name" name="first_name" required>
@@ -29,14 +37,12 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="role_id" class="form-label">Role</label>
-                    <select class="form-select" id="role_id" name="role_id" required>
-                        <!-- Populate options dynamically from the 'roles' table in your database -->
+                    <label for="id" class="form-label">Role</label>
+                    <select class="form-select" id="id" name="id" required>
                         <option value="" disabled selected>Select Role</option>
-                        <option value="1">Admin</option>
-                        <option value="2">Editor</option>
-                        <option value="3">Subscriber</option>
-                        <!-- Add other roles as per your system -->
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?= $role['id']; ?>"><?= $role['role']; ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 

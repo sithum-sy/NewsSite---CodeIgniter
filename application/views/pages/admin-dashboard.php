@@ -37,36 +37,52 @@
 
                 <div class="col-md-8">
                     <h3>User Management</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Username</th>
-                                <th scope="col">Role</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>JohnDoe</td>
-                                <td>News Editor</td>
-                                <td>johndoe@example.com</td>
-                                <td>
-                                    <a href="#" class="btn btn-warning btn-sm">Edit</a>
-                                    <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>JaneSmith</td>
-                                <td>Journalist</td>
-                                <td>janesmith@example.com</td>
-                                <td>
-                                    <a href="#" class="btn btn-warning btn-sm">Edit</a>
-                                    <a href="#" class="btn btn-danger btn-sm">Delete</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="card-body">
+
+                        <?php if ($this->session->flashdata('success')): ?>
+                            <div class="alert alert-success">
+                                <?php echo $this->session->flashdata('success'); ?>
+                            </div>
+                        <?php endif; ?>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Role</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($users as $user): ?>
+                                        <tr>
+                                            <td><?= $user['first_name']; ?></td>
+                                            <td><?= $user['last_name']; ?></td>
+                                            <td><?= $user['role']; ?></td>
+                                            <td><?= $user['email']; ?></td>
+                                            <td><?= $user['contact_number']; ?></td>
+                                            <td>
+                                                <span class="badge bg-success">Active
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="btn btn-primary btn-sm">View</a>
+                                                <a href="#" class="btn btn-warning btn-sm">Edit</a>
+                                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                                <a href="#" class="btn btn-secondary btn-sm">Active/Inactive</a>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -85,7 +101,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Dynamic content will be inserted here -->
                             <tr>
                                 <td>Breaking News: Market Update</td>
                                 <td>Business</td>

@@ -12,30 +12,26 @@ class User_model extends CI_Model
         return $query->row();
     }
 
-    // public function login()
-    // {
-    //     $email = $this->input->post('email');
-    //     $password = $this->input->post('password');
+    public function get_roles()
+    {
+        $query = $this->db->get('roles');
+        return $query->result_array();
+    }
 
-    //     $this->load->model('User_model');
-    //     $user = $this->User_model->get_user_by_email($email);
+    public function add_user($data)
+    {
+        return $this->db->insert('users', $data);
+    }
 
-    //     if ($user && password_verify($password, $user->password)) {
-    //         $this->session->set_userdata([
-    //             'user_id' => $user->id,
-    //             'role_id' => $user->role_id,
-    //             'logged_in' => TRUE
-    //         ]);
+    public function get_users()
+    {
+        // $query = $this->db->get('users');
+        // return $query->result_array();
 
-    //         // Redirect based on role
-    //         if ($user->role_id == 1) { // Assuming 1 is the admin role ID
-    //             redirect('pages/dashboard/admin-dashboard');
-    //         } else {
-    //             redirect('home'); // Redirect other users to a default page
-    //         }
-    //     } else {
-    //         $this->session->set_flashdata('error', 'Invalid login credentials');
-    //         redirect('login');
-    //     }
-    // }
+        $this->db->select('users.*, roles.role');
+        $this->db->from('users');
+        $this->db->join('roles', 'users.role_id = roles.id', 'left'); // Adjust join type if needed
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }

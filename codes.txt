@@ -3,3 +3,11 @@ Start a project - composer create-project codeigniter/framework your_project_nam
 Configure the base_url in application/config/config.php: $config['base_url'] = 'http://localhost/your_project_name/';
 
 folder structure
+
+print and pdf buttons
+
+excel sheet of users
+
+ajax data pass to db and load data to db
+
+active/ inactive

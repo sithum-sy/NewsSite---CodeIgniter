@@ -56,8 +56,9 @@ $route['login'] = 'pages/view/login';
 $route['logout'] = 'users/logout';
 
 
-$route['dashboard'] = 'pages/view/admin-dashboard';
-$route['register'] = 'pages/view/register';
+$route['dashboard'] = 'users/view/admin-dashboard';
+$route['register'] = 'users/load_register';
+$route['registerUser'] = 'users/register_user';
 
 $route['news/create'] = 'news/create';
 $route['news/(:any)'] = 'news/view/$1';

@@ -10,6 +10,22 @@ class Users extends CI_Controller
         $this->load->helper(['url', 'form']);
     }
 
+    public function view($page = 'home')
+    {
+
+        if (!file_exists(APPPATH . 'views/pages/' . $page . '.php')) {
+            show_404();
+        }
+
+        $data['users'] = $this->User_model->get_users();
+
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('pages/' . $page, $data);
+        $this->load->view('templates/footer', $data);
+    }
+
+
     public function login()
     {
         if ($this->session->userdata('logged_in')) {
@@ -56,17 +72,64 @@ class Users extends CI_Controller
                 redirect('dashboard');
                 break;
             case 2: // News-Editor
-                redirect('pages/dashboard/editor-dashboard');
+                redirect('editor-dashboard');
                 break;
             case 3: // Journalist
-                redirect('pages/dashboard/journalist-dashboard');
+                redirect('journalist-dashboard');
                 break;
             case 4: // Reader
                 redirect('home');
                 break;
             default:
-                redirect('pages/login');
+                redirect('login');
                 break;
+        }
+    }
+
+    public function load_register()
+    {
+        $this->load->model('User_model');
+
+        $data['roles'] = $this->User_model->get_roles();
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('pages/register', $data);
+        $this->load->view('templates/footer', $data);
+    }
+
+    public function register_user()
+    {
+        $this->load->library('form_validation');
+        $this->load->model('User_model');
+
+        $this->form_validation->set_rules('id', 'Role', 'required');
+        $this->form_validation->set_rules('first_name', 'First Name', 'required');
+        $this->form_validation->set_rules('last_name', 'Last Name', 'required');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]');
+        $this->form_validation->set_rules('contact_number', 'Contact Number', 'required');
+        $this->form_validation->set_rules('password', 'Password', 'required|min_length[4]');
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->load->view('templates/header');
+            $this->load->view('pages/register');
+            $this->load->view('templates/footer');
+        } else {
+            $data = [
+                'role_id' => $this->input->post('id'),
+                'first_name' => $this->input->post('first_name'),
+                'last_name' => $this->input->post('last_name'),
+                'email' => $this->input->post('email'),
+                'contact_number' => $this->input->post('contact_number'),
+                'password' => password_hash($this->input->post('password'), PASSWORD_BCRYPT),
+            ];
+
+            if ($this->User_model->add_user($data)) {
+                $this->session->set_flashdata('success', 'User registered successfully!');
+                redirect('dashboard');
+            } else {
+                $this->session->set_flashdata('error', 'Failed to register user.');
+                redirect('dashboard');
+            }
         }
     }
 }

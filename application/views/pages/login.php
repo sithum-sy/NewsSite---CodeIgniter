@@ -40,6 +40,10 @@
                     <div class="alert alert-danger">
                         <?php echo $this->session->flashdata('error'); ?>
                     </div>
+                <?php elseif ($this->session->flashdata('success')): ?>
+                    <div class="alert alert-success">
+                        <?php echo $this->session->flashdata('success'); ?>
+                    </div>
                 <?php endif; ?>
                 <form action="<?= site_url('users/do_login') ?>" method="post">
                     <div class="mb-3">
