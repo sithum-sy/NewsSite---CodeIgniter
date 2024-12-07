@@ -12,6 +12,16 @@
 
             <form action="<?php echo site_url('registerUser'); ?>" method="POST">
                 <div class="mb-3">
+                    <label for="id" class="form-label">Role</label>
+                    <select class="form-select" id="id" name="id" required>
+                        <option value="" disabled selected>Select Role</option>
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?= $role['id']; ?>"><?= $role['role']; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="mb-3">
                     <label for="first_name" class="form-label">First Name</label>
                     <input type="text" class="form-control" id="first_name" name="first_name" required>
                 </div>
@@ -37,13 +47,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="id" class="form-label">Role</label>
-                    <select class="form-select" id="id" name="id" required>
-                        <option value="" disabled selected>Select Role</option>
-                        <?php foreach ($roles as $role): ?>
-                            <option value="<?= $role['id']; ?>"><?= $role['role']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <label for="confirm_password" class="form-label">Confirm Password</label>
+                    <input type="password" name="confirm_password" class="form-control" placeholder="" required>
                 </div>
 
                 <button type="submit" class="btn btn-primary">Register User</button>
