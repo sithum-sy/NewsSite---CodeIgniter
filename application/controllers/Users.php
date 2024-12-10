@@ -1,40 +1,33 @@
 <?php
 
+use PhpSpreadsheet\Spreadsheet;
+use PhpSpreadsheet\Writer\Xlsx;
+
 class Users extends CI_Controller
 {
     public function __construct()
     {
         parent::__construct();
         $this->load->model('User_model');
+        $this->load->model('News_model');
         $this->load->library('session');
         $this->load->helper(['url', 'form']);
         $this->load->library('form_validation');
     }
 
-    public function view($page = 'dashboard')
-    {
-
-        if (!file_exists(APPPATH . 'views/dashboards/' . $page . '.php')) {
-            show_404();
-        }
-
-        $data['users'] = $this->User_model->get_users();
-
-
-        // $this->load->view('templates/header', $data);
-        $this->load->view('dashboards/' . $page, $data);
-        // $this->load->view('templates/footer', $data);
-    }
-
-
     public function login()
     {
         if ($this->session->userdata('logged_in')) {
-            $this->redirect_by_role();
+            $role_id = $this->session->userdata('role_id');
+
+            redirect('dashboard');
         }
 
-        $this->load->view('login');
+        $this->load->view('templates/header');
+        $this->load->view('pages/login');
+        $this->load->view('templates/footer');
     }
+
 
     public function do_login()
     {
@@ -49,8 +42,7 @@ class Users extends CI_Controller
                 'role_id' => $user->role_id,
                 'logged_in' => TRUE
             ]);
-
-            $this->redirect_by_role();
+            redirect('dashboard');
         } else {
             $this->session->set_flashdata('error', 'Invalid email or password.');
             redirect('login');
@@ -64,28 +56,65 @@ class Users extends CI_Controller
         redirect('login');
     }
 
-    private function redirect_by_role()
+    public function view($page = null)
     {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
+
+        if (!$page) {
+            $role_id = $this->session->userdata('role_id');
+
+            switch ($role_id) {
+                case 1: // Admin
+                    $page = 'admin-dashboard';
+                    break;
+                case 2: // News-Editor
+                    $page = 'editor-dashboard';
+                    break;
+                case 3: // Journalist
+                    $page = 'journalist-dashboard';
+                    break;
+                case 4: // Reader
+                    $page = 'reader-dashboard';
+                    break;
+                default:
+                    show_404();
+            }
+        }
+
+        if (!file_exists(APPPATH . 'views/dashboards/' . $page . '.php')) {
+            show_404();
+        }
+
+        // Initialize the data array
+        $data = [];
+
+        // Populate data based on role
         $role_id = $this->session->userdata('role_id');
+        $user_id = $this->session->userdata('user_id');
 
         switch ($role_id) {
-            case 1: // Admin
-                redirect('dashboard');
+            case 1: // Admin: View all users
+                $data['users'] = $this->User_model->get_users();
                 break;
-            case 2: // News-Editor
-                redirect('editor-dashboard');
+
+            case 2: // News Editor: View articles for approval
+                $data['news_articles'] = $this->News_model->get_submitted_news();
                 break;
-            case 3: // Journalist
-                redirect('journalist-dashboard');
+
+            case 3: // Journalist: View articles written by themselves
+                $data['news_articles'] = $this->News_model->get_articles_by_journalist($user_id);
                 break;
-            case 4: // Reader
-                redirect('home');
-                break;
-            default:
-                redirect('login');
+
+            case 4: // Reader: View all published articles
+                $data['news_articles'] = $this->News_model->get_published_articles();
                 break;
         }
+
+        $this->load->view('dashboards/' . $page, $data);
     }
+
 
     public function load_register()
     {
@@ -219,5 +248,49 @@ class Users extends CI_Controller
             $this->session->set_flashdata('error', 'Failed to delete user.');
         }
         redirect('dashboard');
+    }
+
+
+    public function export_users_to_excel()
+    {
+        $this->load->model('User_model');
+
+        require_once FCPATH . 'vendor/autoload.php';  // Include autoload for PhpSpreadsheet
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $users = $this->User_model->get_users();
+
+        // Set header for Excel sheet
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Name');
+        $sheet->setCellValue('C1', 'Role');
+        $sheet->setCellValue('D1', 'Email');
+        $sheet->setCellValue('E1', 'Mobile');
+        $sheet->setCellValue('F1', 'Status');
+
+        // Fill in user data
+        $row = 2;
+        foreach ($users as $user) {
+            $sheet->setCellValue('A' . $row, $user['id']);
+            $sheet->setCellValue('B' . $row, $user['first_name'] . ' ' . $user['last_name']);
+            $sheet->setCellValue('C' . $row, $user['role']);
+            $sheet->setCellValue('D' . $row, $user['email']);
+            $sheet->setCellValue('E' . $row, $user['contact_number']);
+            $sheet->setCellValue('F' . $row, ($user['is_active'] == 1 ? 'Active' : 'Inactive'));
+            $row++;
+        }
+
+        // File properties and download
+        $filename = 'users_list_' . date('Y-m-d_H-i-s') . '.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+
+        exit();
     }
 }

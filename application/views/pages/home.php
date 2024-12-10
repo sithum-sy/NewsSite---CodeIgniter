@@ -12,9 +12,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo site_url('about'); ?>">About</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="<?php echo site_url('news/create'); ?>">Create News</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link" href="#">World</a>
                         </li>
@@ -55,7 +55,7 @@
                             <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Article Image">
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo $news_item['title']; ?></h5>
-                                <p class="card-text"><?php echo $news_item['text']; ?></p>
+                                <p class="card-text"><?php echo $news_item['content']; ?></p>
                                 <a href="<?php echo site_url('news/' . $news_item['slug']); ?>" class="btn btn-primary">Read More</a>
                             </div>
                         </div>

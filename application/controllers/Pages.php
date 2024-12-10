@@ -16,7 +16,7 @@ class Pages extends CI_Controller
             show_404();
         }
 
-        $data['news'] = $this->News_model->get_news();
+        $data['news'] = $this->News_model->get_published_news();
         // $data['title'] = ucfirst(($page));
 
 

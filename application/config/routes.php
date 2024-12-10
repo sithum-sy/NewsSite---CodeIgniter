@@ -52,17 +52,26 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $route['home'] = 'pages/view/home';
 $route['about'] = 'pages/view/about';
 $route['contact'] = 'pages/view/contact';
-$route['login'] = 'pages/view/login';
+
+
+$route['login'] = 'users/login';
 $route['logout'] = 'users/logout';
-
-
-$route['dashboard'] = 'users/view/dashboard';
+$route['dashboard'] = 'users/view';
 $route['register'] = 'users/load_register';
 $route['registerUser'] = 'users/register_user';
 $route['toggleUserStatus'] = 'users/toggle_user_status';
 
 $route['news/create'] = 'news/create';
+$route['news/store'] = 'news/store_news';
 $route['news/(:any)'] = 'news/view/$1';
 $route['news'] = 'news';
 // $route['(:any)'] = 'pages/view/$1';
+
+$route['journalist/news/(:num)'] = 'news/view_news/$1';
+$route['journalist/publish/(:num)'] = 'news/publish/$1';
+$route['editor/news/(:num)'] = 'news/review_news/$1';
+$route['editor/news/review'] = 'news/review_news_article';
+$route['editor/news/download_pdf/(:num)'] = 'news/download_pdf/$1';
+
+
 $route['default_controller'] = 'pages/view';
