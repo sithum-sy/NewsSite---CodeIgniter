@@ -11,8 +11,10 @@ class News extends CI_Controller
         $this->load->helper('form');
         $this->load->library('form_validation');
         $this->load->library('session');
+        $this->load->helper('text');
     }
 
+    // Get all news articles to Homepage
     public function view()
     {
         $data['news'] = $this->News_model->get_published_news();
@@ -26,6 +28,26 @@ class News extends CI_Controller
         $this->load->view('templates/footer');
     }
 
+    // View a single published news by logged in reader
+    public function view_single($slug)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
+
+        $data['news_item'] = $this->News_model->get_news_by_slug($slug);
+
+        if (empty($data['news_item'])) {
+            show_404();
+        }
+
+        $this->load->view('templates/header', $data);
+        $this->load->view('news/view', $data);
+        $this->load->view('templates/footer');
+    }
+
+
+    // Get form to create a news by journalist
     public function create()
     {
         if (!$this->session->userdata('logged_in')) {
@@ -38,7 +60,7 @@ class News extends CI_Controller
         $this->load->view('news/create', $data);
     }
 
-
+    // Store a news by journalist
     public function store_news()
     {
         if (!$this->session->userdata('logged_in')) {
@@ -97,7 +119,7 @@ class News extends CI_Controller
         }
 
         $data = [
-            'news_item' => $news_item,
+            'news_item' => $news_item['result'],
         ];
 
         $this->load->view('dashboards/journalist/view_news', $data);
@@ -109,10 +131,6 @@ class News extends CI_Controller
         if (!$this->session->userdata('logged_in')) {
             redirect('login');
         }
-
-        // Debug the `id` being passed
-        // echo "ID Passed: " . $id;
-        // echo "<br>";
 
         $data['news_item'] = $this->News_model->get_single_submitted_news($id);
 

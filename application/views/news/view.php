@@ -40,12 +40,12 @@
         <div class="container my-5">
             <div class="row">
                 <div class="col-md-12">
-                    <h1 class="display-4 text-center"><?php echo $news['title']; ?></h1>
+                    <h1 class="display-4 text-center"><?php echo $news_item['title']; ?></h1>
                     <p class="text-muted text-center">Published on: <span>Date</span></p>
                     <hr>
                     <img src="https://via.placeholder.com/800x400" class="img-fluid rounded mb-4" alt="News Image">
                     <div class="news-content">
-                        <p><?php echo nl2br($news['content']); ?></p>
+                        <p><?php echo nl2br($news_item['content']); ?></p>
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between">

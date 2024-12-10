@@ -3,7 +3,7 @@
         <!-- Navigation Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
             <div class="container-fluid">
-                <a class="navbar-brand" href="<?php echo site_url('home'); ?>">NewsSite</a>
+                <a class="navbar-brand" href="<?php echo site_url('home'); ?>">X News</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -12,9 +12,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo site_url('about'); ?>">About</a>
                         </li>
-                        <!-- <li class="nav-item">
-                            <a class="nav-link" href="<?php echo site_url('news/create'); ?>">Create News</a>
-                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link" href="#">World</a>
                         </li>
@@ -30,9 +27,22 @@
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo site_url('contact'); ?>">Contact</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo site_url('login'); ?>">Login/Register</a>
-                        </li>
+
+                        <?php if ($this->session->userdata('logged_in')): ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo site_url('dashboard'); ?>">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo site_url('logout'); ?>">Logout</a>
+                            </li>
+                        <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo site_url('login'); ?>">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo site_url('register'); ?>">Register</a>
+                            </li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
@@ -52,10 +62,14 @@
                 <?php foreach ($news as $news_item): ?>
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Article Image">
+                            <!-- <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Article Image"> -->
+                            <img src="<?php echo base_url($news_item['image']); ?>" class="card-img-top" alt="Article Image">
+
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo $news_item['title']; ?></h5>
-                                <p class="card-text"><?php echo $news_item['content']; ?></p>
+                                <p class="card-text">
+                                    <?php echo word_limiter($news_item['content'], 20); ?>
+                                </p>
                                 <a href="<?php echo site_url('news/' . $news_item['slug']); ?>" class="btn btn-primary">Read More</a>
                             </div>
                         </div>

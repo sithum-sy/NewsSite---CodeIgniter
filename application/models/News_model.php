@@ -25,6 +25,21 @@ class News_model extends CI_Model
         // return $query->row_array();
     }
 
+    // View a single published news by logged in reader
+    public function get_news_by_slug($slug)
+    {
+        $this->db->select('news_articles.*, categories.category as category_name, GROUP_CONCAT(tags.tag) as tag_names');
+        $this->db->from('news_articles');
+        $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
+        $this->db->join('tags', 'news_articles.tag_id = tags.id', 'left');
+        $this->db->where('news_articles.slug', $slug);
+        $this->db->group_by('news_articles.id');
+        $query = $this->db->get();
+
+        return $query->row_array();
+    }
+
+
     // Add news by journalists
     public function insert_article($news_data)
     {
@@ -34,11 +49,11 @@ class News_model extends CI_Model
     // View news written by a journalist
     public function get_articles_by_journalist($journalist_id)
     {
-        $this->db->select('*');
+        $this->db->select('news_articles.*, categories.category as category');
         $this->db->from('news_articles');
-        $this->db->where('journalist_id', $journalist_id);
+        $this->db->where('news_articles.journalist_id', $journalist_id);
         $this->db->join('categories', 'news_articles.category_id = categories.id', 'INNER');
-        $this->db->order_by('created_at', 'DESC');
+        $this->db->order_by('news_articles.created_at', 'DESC');
 
         $query = $this->db->get();
 
@@ -62,7 +77,7 @@ class News_model extends CI_Model
     // View a single news from a journalist
     public function get_news_by_id($id)
     {
-        $this->db->select('news_articles.*, categories.category as category_name, GROUP_CONCAT(tags.tag) as tag_names');
+        $this->db->select('news_articles.*, categories.category as category_name, GROUP_CONCAT(tags.tag SEPARATOR ", ") as tag_names');
         $this->db->from('news_articles');
         $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
         $this->db->join('tags', 'news_articles.tag_id = tags.id', 'left');
@@ -70,7 +85,9 @@ class News_model extends CI_Model
         $this->db->group_by('news_articles.id');
         $query = $this->db->get();
 
-        return $query->row_array();
+        return [
+            'result' => $query->row_array(),
+        ];
     }
 
     // View all news articles in editor-dashboard

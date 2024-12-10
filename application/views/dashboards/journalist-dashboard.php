@@ -72,6 +72,7 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Title</th>
                                     <th>Category</th>
                                     <th>Status</th>
@@ -82,6 +83,7 @@
                             <tbody>
                                 <?php foreach ($news_articles as $article): ?>
                                     <tr>
+                                        <td><?php echo $article['id']; ?></td>
                                         <td><?php echo $article['title']; ?></td>
                                         <td><?php echo $article['category']; ?></td>
                                         <td>

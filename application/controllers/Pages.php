@@ -7,18 +7,17 @@ class Pages extends CI_Controller
         $this->load->model('News_model');
         $this->load->helper('url');
         $this->load->library('session');
+        $this->load->helper('text');
     }
 
+    // Homepage view
     public function view($page = 'home')
     {
-
         if (!file_exists(APPPATH . 'views/pages/' . $page . '.php')) {
             show_404();
         }
 
         $data['news'] = $this->News_model->get_published_news();
-        // $data['title'] = ucfirst(($page));
-
 
         $this->load->view('templates/header', $data);
         $this->load->view('pages/' . $page, $data);

@@ -63,7 +63,7 @@ $route['toggleUserStatus'] = 'users/toggle_user_status';
 
 $route['news/create'] = 'news/create';
 $route['news/store'] = 'news/store_news';
-$route['news/(:any)'] = 'news/view/$1';
+$route['news/(:any)'] = 'news/view_single/$1';
 $route['news'] = 'news';
 // $route['(:any)'] = 'pages/view/$1';
 

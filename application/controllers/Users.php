@@ -15,6 +15,7 @@ class Users extends CI_Controller
         $this->load->library('form_validation');
     }
 
+    // View login page/dashboard 
     public function login()
     {
         if ($this->session->userdata('logged_in')) {
@@ -28,7 +29,7 @@ class Users extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-
+    // Method to log in after entering email and password
     public function do_login()
     {
         $email = $this->input->post('email');
@@ -56,6 +57,7 @@ class Users extends CI_Controller
         redirect('login');
     }
 
+    // View unique dashboard based on user
     public function view($page = null)
     {
         if (!$this->session->userdata('logged_in')) {
@@ -108,23 +110,44 @@ class Users extends CI_Controller
                 break;
 
             case 4: // Reader: View all published articles
-                $data['news_articles'] = $this->News_model->get_published_articles();
+                // $data['news_articles'] = $this->News_model->get_published_articles();
+                redirect('home');
                 break;
         }
 
         $this->load->view('dashboards/' . $page, $data);
     }
 
-
+    // View register form in admin dashboard and in homepage for new readers
     public function load_register()
     {
-        $data['roles'] = $this->User_model->get_roles();
+        if ($this->session->userdata('logged_in')) {
+            // Check if the user is an admin (assuming 'role' is stored in session)
+            $role_id = $this->session->userdata('role_id'); // Adjust according to your session data structure
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('pages/register', $data);
-        $this->load->view('templates/footer', $data);
+            if ($role_id == 1) {
+                // If admin, load the register page for admin
+                $data['roles'] = $this->User_model->get_roles();
+
+                $this->load->view('templates/header', $data);
+                $this->load->view('pages/register', $data);  // Admin register page
+                $this->load->view('templates/footer', $data);
+            } else {
+                // If user is not admin, redirect to reader registration page
+                $this->load->view('templates/header');
+                $this->load->view('dashboards/reader/register_reader');
+                $this->load->view('templates/footer');
+            }
+        } else {
+            // If not logged in, redirect to the reader registration page
+            $this->load->view('templates/header');
+            $this->load->view('dashboards/reader/register_reader');
+            $this->load->view('templates/footer');
+        }
     }
 
+
+    // Register a user by admin and self register
     public function register_user()
     {
         $this->form_validation->set_rules('id', 'Role', 'required');
@@ -133,18 +156,28 @@ class Users extends CI_Controller
         $this->form_validation->set_rules('email', 'Email', 'required|valid_email|is_unique[users.email]');
         $this->form_validation->set_rules('contact_number', 'Contact Number', 'required');
         $this->form_validation->set_rules('password', 'Password', 'required|min_length[4]');
-        $this->form_validation->set_rules(
-            'confirm_password',
-            'Confirm Password',
-            'required|matches[password]',
-            array(
-                'matches' => 'Passwords do not match.'
-            )
-        );
+        $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]', array(
+            'matches' => 'Passwords do not match.'
+        ));
+
+        // Check if the user is logged in
+        if ($this->session->userdata('logged_in')) {
+            $role_id = $this->session->userdata('role_id');
+        } else {
+            // Default to 'reader' if not logged in
+            $role_id = 4;
+        }
 
         if ($this->form_validation->run() === FALSE) {
+            $data['roles'] = $this->User_model->get_roles();
             $this->load->view('templates/header');
-            $this->load->view('pages/register');
+
+            if ($role_id == 1) {
+                $this->load->view('pages/register', $data);
+            } else {
+                $this->load->view('dashboards/reader/register_reader');
+            }
+
             $this->load->view('templates/footer');
         } else {
             $data = [
@@ -158,7 +191,20 @@ class Users extends CI_Controller
 
             if ($this->User_model->add_user($data)) {
                 $this->session->set_flashdata('success', 'User registered successfully!');
-                redirect('dashboard');
+
+                // If the role is admin, redirect to the admin dashboard
+                if ($role_id == 1) {
+                    redirect('dashboard');
+                }
+
+                // If the user is a reader, new session is created and is redirected them to the news homepage
+                if ($role_id == 4) {
+                    $user_data = $this->User_model->get_user_by_email($this->input->post('email'));
+                    $this->session->set_userdata('logged_in', TRUE);
+                    $this->session->set_userdata('user_id', $user_data->id);
+                    $this->session->set_userdata('role_id', 4);
+                    redirect('home');
+                }
             } else {
                 $this->session->set_flashdata('error', 'Failed to register user.');
                 redirect('dashboard');
@@ -166,6 +212,8 @@ class Users extends CI_Controller
         }
     }
 
+
+    // View a single user by admin
     public function view_user($user_id)
     {
         $data['user'] = $this->User_model->get_user_by_id($user_id);
@@ -173,6 +221,7 @@ class Users extends CI_Controller
         $this->load->view('dashboards/view_user', $data);
     }
 
+    // View edit form of a single user by admin
     public function edit_user($id)
     {
         $data['user'] = $this->User_model->get_user_by_id($id);
@@ -181,6 +230,7 @@ class Users extends CI_Controller
         $this->load->view('dashboards/edit_user', $data);
     }
 
+    // Upadte edited data by admin
     public function update_user($id)
     {
         $user_id = $this->input->post('user_id');
@@ -227,6 +277,7 @@ class Users extends CI_Controller
         }
     }
 
+    // Toggle active/inactive by admin
     public function toggle_user_status($id)
     {
         $current_status = $this->input->post('current_status');
@@ -240,6 +291,7 @@ class Users extends CI_Controller
         redirect('dashboard');
     }
 
+    // Delete a user by admin
     public function delete_user($id)
     {
         if ($this->User_model->delete_user($id)) {
@@ -250,7 +302,7 @@ class Users extends CI_Controller
         redirect('dashboard');
     }
 
-
+    // Get spreadsheet of user data
     public function export_users_to_excel()
     {
         $this->load->model('User_model');
