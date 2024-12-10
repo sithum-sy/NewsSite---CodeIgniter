@@ -11,16 +11,17 @@ class Pages extends CI_Controller
     }
 
     // Homepage view
-    public function view($page = 'home')
+    public function view()
     {
+        $page = 'contact';
         if (!file_exists(APPPATH . 'views/pages/' . $page . '.php')) {
             show_404();
         }
 
-        $data['news'] = $this->News_model->get_published_news();
+        // $data['news'] = $this->News_model->get_published_news();
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('pages/' . $page, $data);
-        $this->load->view('templates/footer', $data);
+        $this->load->view('templates/header');
+        $this->load->view('pages/' . $page);
+        $this->load->view('templates/footer');
     }
 }

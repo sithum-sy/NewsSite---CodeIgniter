@@ -5,28 +5,66 @@ class News extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('News_model');
-        $this->load->model('User_model');
-        $this->load->helper('url_helper');
-        $this->load->helper('form');
-        $this->load->library('form_validation');
-        $this->load->library('session');
-        $this->load->helper('text');
+        $this->load->model(['News_model', 'User_model']);
+        $this->load->helper(['url_helper', 'form', 'text']);
+        $this->load->library(['form_validation', 'session', 'pagination']);
     }
 
     // Get all news articles to Homepage
     public function view()
     {
-        $data['news'] = $this->News_model->get_published_news();
+        // Pagination configuration
+        $config['base_url'] = site_url('news/fetch_news');
+        $config['total_rows'] = $this->News_model->count_all_news();
+        $config['per_page'] = 6; // Number of items per page
+        $config['use_page_numbers'] = TRUE;
+
+        // Pagination settings for AJAX
+        $config['attributes'] = array('class' => 'page-link');
+        $config['full_tag_open'] = '<ul class="pagination justify-content-center">';
+        $config['full_tag_close'] = '</ul>';
+        $config['num_tag_open'] = '<li class="page-item">';
+        $config['num_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="page-item active"><a class="page-link">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['next_tag_open'] = '<li class="page-item">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_tag_open'] = '<li class="page-item">';
+        $config['prev_tag_close'] = '</li>';
+
+        $this->pagination->initialize($config);
+
+        // Initial load of data (first page)
+        $data['news'] = $this->News_model->get_published_news(0, $config['per_page']);
+        $data['pagination_links'] = $this->pagination->create_links();
 
         if (empty($data['news'])) {
             show_404();
         }
 
         $this->load->view('templates/header', $data);
-        $this->load->view('news/view', $data);
-        $this->load->view('templates/footer');
+        $this->load->view('pages/home', $data);
+        $this->load->view('templates/footer', $data);
     }
+
+    public function fetch_news()
+    {
+        // Get the page number from the AJAX request (default to 1 if not provided)
+        $page = $this->input->get('page', TRUE); // Fetch the 'page' parameter from GET request
+        $page = ($page) ? (int) $page : 1; // Ensure the page is an integer and default to 1 if not set
+
+        $limit = 6; // Number of items per page
+        $offset = ($page - 1) * $limit; // Calculate the offset based on the page number
+
+        // Fetch news based on offset and limit
+        $data['news'] = $this->News_model->get_published_news($offset, $limit);
+        $data['pagination_links'] = $this->pagination->create_links();
+
+        // Return the news data and pagination links as JSON for AJAX
+        echo json_encode($data);
+    }
+
+
 
     // View a single published news by logged in reader
     public function view_single($slug)
@@ -202,5 +240,17 @@ class News extends CI_Controller
 
         $this->session->set_flashdata('success', 'News article has been ' . $update_data['status'] . '.');
         redirect('dashboard');
+    }
+
+    // Get headlines to be viewed in Homepage
+    public function fetch_latest_headline()
+    {
+        $latest_news = $this->News_model->get_latest_news();
+
+        if ($latest_news) {
+            echo json_encode($latest_news);
+        } else {
+            echo json_encode([]);
+        }
     }
 }
