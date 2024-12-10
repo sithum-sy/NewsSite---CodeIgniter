@@ -48,11 +48,13 @@
                     <h1 class="display-4 text-center"><?php echo $news_item['title']; ?></h1>
                     <p class="text-muted text-center">
                         <i class="fas fa-calendar-alt"></i> Published on: <span><?php echo $news_item['updated_at']; ?></span> |
-                        <i class="fas fa-user"></i> Author: <span><?php echo $news_item['first_name'] . ' ' . $news_item['last_name']; ?></span> |
+                        <i class="fas fa-tags"></i> Tags: <span><?php echo $news_item['tag_names']; ?></span> |
                         <i class="fas fa-folder"></i> Category: <span><?php echo $news_item['category_name']; ?></span>
                     </p>
+
                     <p class="text-muted text-center">
-                        <i class="fas fa-tags"></i> Tags:<?php echo $news_item['tag_names']; ?>
+                        <i class="fas fa-user"></i> Author: <span><?php echo $news_item['first_name'] . ' ' . $news_item['last_name']; ?></span>
+
                     </p>
                     <hr>
                     <img src="<?php echo base_url($news_item['image']); ?>" class="img-fluid rounded mb-4" alt="News Image">

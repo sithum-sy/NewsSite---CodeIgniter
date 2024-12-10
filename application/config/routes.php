@@ -66,7 +66,7 @@ $route['news/store'] = 'news/store_news';
 $route['news/(:any)'] = 'news/view_single/$1';
 // $route['news'] = 'news';
 $route['news'] = 'news/fetch_latest_headline';
-$route['news/fetch_news'] = 'news/fetch_news';
+// $route['news/fetch_news'] = 'news/fetch_news';
 // $route['(:any)'] = 'pages/view/$1';
 
 $route['journalist/news/(:num)'] = 'news/view_news/$1';

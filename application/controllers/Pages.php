@@ -11,9 +11,9 @@ class Pages extends CI_Controller
     }
 
     // Homepage view
-    public function view()
+    public function view($page = 'contact')
     {
-        $page = 'contact';
+
         if (!file_exists(APPPATH . 'views/pages/' . $page . '.php')) {
             show_404();
         }

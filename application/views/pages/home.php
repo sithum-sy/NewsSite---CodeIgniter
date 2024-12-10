@@ -79,9 +79,6 @@
                     </div>
                 <?php endforeach; ?>
             </div>
-            <div id="pagination-links" class="text-center">
-                <?php echo $pagination_links; ?>
-            </div>
         </div>
     </div>
 </div>

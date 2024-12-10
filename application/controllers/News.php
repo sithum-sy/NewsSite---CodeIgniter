@@ -13,30 +13,7 @@ class News extends CI_Controller
     // Get all news articles to Homepage
     public function view()
     {
-        // Pagination configuration
-        $config['base_url'] = site_url('news/fetch_news');
-        $config['total_rows'] = $this->News_model->count_all_news();
-        $config['per_page'] = 6; // Number of items per page
-        $config['use_page_numbers'] = TRUE;
-
-        // Pagination settings for AJAX
-        $config['attributes'] = array('class' => 'page-link');
-        $config['full_tag_open'] = '<ul class="pagination justify-content-center">';
-        $config['full_tag_close'] = '</ul>';
-        $config['num_tag_open'] = '<li class="page-item">';
-        $config['num_tag_close'] = '</li>';
-        $config['cur_tag_open'] = '<li class="page-item active"><a class="page-link">';
-        $config['cur_tag_close'] = '</a></li>';
-        $config['next_tag_open'] = '<li class="page-item">';
-        $config['next_tag_close'] = '</li>';
-        $config['prev_tag_open'] = '<li class="page-item">';
-        $config['prev_tag_close'] = '</li>';
-
-        $this->pagination->initialize($config);
-
-        // Initial load of data (first page)
-        $data['news'] = $this->News_model->get_published_news(0, $config['per_page']);
-        $data['pagination_links'] = $this->pagination->create_links();
+        $data['news'] = $this->News_model->get_published_news();
 
         if (empty($data['news'])) {
             show_404();
@@ -44,27 +21,8 @@ class News extends CI_Controller
 
         $this->load->view('templates/header', $data);
         $this->load->view('pages/home', $data);
-        $this->load->view('templates/footer', $data);
+        $this->load->view('templates/footer');
     }
-
-    public function fetch_news()
-    {
-        // Get the page number from the AJAX request (default to 1 if not provided)
-        $page = $this->input->get('page', TRUE); // Fetch the 'page' parameter from GET request
-        $page = ($page) ? (int) $page : 1; // Ensure the page is an integer and default to 1 if not set
-
-        $limit = 6; // Number of items per page
-        $offset = ($page - 1) * $limit; // Calculate the offset based on the page number
-
-        // Fetch news based on offset and limit
-        $data['news'] = $this->News_model->get_published_news($offset, $limit);
-        $data['pagination_links'] = $this->pagination->create_links();
-
-        // Return the news data and pagination links as JSON for AJAX
-        echo json_encode($data);
-    }
-
-
 
     // View a single published news by logged in reader
     public function view_single($slug)

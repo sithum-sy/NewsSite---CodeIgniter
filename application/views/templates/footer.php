@@ -44,56 +44,6 @@
         $(document).ready(function() {
             fetchHeadlines();
         });
-
-        $(document).ready(function() {
-            // AJAX for pagination
-            $(document).on('click', '.pagination a', function(e) {
-                e.preventDefault();
-
-                // Get the page number from the link
-                const page = $(this).attr('data-ci-pagination-page');
-
-                // Log the URL to the console to check the generated URL
-                const url = '<?php echo site_url('news/fetch_news'); ?>'; // URL being used
-                console.log('AJAX Request URL:', url + '?page=' + page); // Log it to check the full URL
-
-
-                // Send AJAX request to fetch the news for the selected page
-                $.ajax({
-                    url: '<?php echo site_url('news/fetch_news'); ?>',
-                    type: 'GET',
-                    data: {
-                        page: page
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        // Update the news container with the new news items
-                        let html = '';
-                        $.each(response.news, function(index, news_item) {
-                            html += `
-                            <div class="col-md-4 mb-4">
-                                <div class="card">
-                                    <img src="${news_item.image}" class="card-img-top" alt="Article Image">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${news_item.title}</h5>
-                                        <p class="card-text">${news_item.content.substring(0, 100)}...</p>
-                                        <a href="<?php echo site_url('news/'); ?>${news_item.slug}" class="btn btn-primary">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        });
-                        $('#news-container').html(html);
-
-                        // Update the pagination links
-                        $('#pagination-links').html(response.pagination_links);
-                    },
-                    error: function() {
-                        alert('Failed to fetch news.');
-                    }
-                });
-            });
-        });
     </script>
 
     </body>

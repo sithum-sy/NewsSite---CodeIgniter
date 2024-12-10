@@ -24,6 +24,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |
 */
 $config['base_url'] = 'http://localhost/test_project/';
+// $config['base_url'] = site_url('news/fetch_news');
+
 
 /*
 |--------------------------------------------------------------------------

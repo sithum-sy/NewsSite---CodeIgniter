@@ -9,18 +9,13 @@ class News_model extends CI_Model
     }
 
     // View published news in the Homepage
-    public function get_published_news($offset, $limit)
+    public function get_published_news()
     {
         $this->db->where('status', 'published');
         $this->db->order_by('created_at', 'DESC');
-        $query = $this->db->get('news_articles', $limit, $offset);
+        $query = $this->db->get('news_articles');
 
         return $query->result_array();
-    }
-
-    public function count_all_news()
-    {
-        return $this->db->count_all('news_articles');
     }
 
     // View a single published news by logged in reader
