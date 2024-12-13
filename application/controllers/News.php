@@ -103,7 +103,7 @@ class News extends CI_Controller
         redirect('dashboard');
     }
 
-    // View a single news from a journalist
+    // View a single news by journalist
     public function view_news($id)
     {
         if (!$this->session->userdata('logged_in')) {
@@ -123,6 +123,114 @@ class News extends CI_Controller
         $this->load->view('templates/header');
         $this->load->view('dashboards/journalist/view_news', $data);
         $this->load->view('templates/footer');
+    }
+
+    // View edit form of a news article by journalist
+    public function edit_news_form($id)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
+
+        $news_item = $this->News_model->get_news_by_id($id);
+        $categories = $this->News_model->get_all_categories();
+        $tags = $this->News_model->get_all_tags();
+
+        if (!$news_item) {
+            show_404();
+        }
+
+        $data = [
+            'news_item' => $news_item['result'],
+            'categories' => $categories,
+            'tags' => $tags,
+        ];
+
+        $this->load->view('templates/header');
+        $this->load->view('dashboards/journalist/edit_news', $data);
+        $this->load->view('templates/footer');
+    }
+
+    public function update_news($id)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
+
+        $this->form_validation->set_rules('title', 'Title', 'required|trim');
+        $this->form_validation->set_rules('content', 'Content', 'required|trim');
+        $this->form_validation->set_rules('category', 'Category', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+            $data['validation_errors'] = validation_errors();  // Capture the validation errors
+            $data['news_item'] = $this->News_model->get_news_by_id($id);
+            $data['categories'] = $this->News_model->get_all_categories();
+            $data['tags'] = $this->News_model->get_all_tags();
+
+
+            // $this->load->view('dashboards/journalist/edit_news', $data);
+        } else {
+            $title = $this->input->post('title');
+            $content = $this->input->post('content');
+            $category_id = $this->input->post('category');
+            $tag_id = $this->input->post('tag');
+
+            $image_path = NULL;
+            if (!empty($_FILES['image']['name'])) {
+                $config['upload_path'] = './uploads/news_images/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif';
+                $config['max_size'] = 2048;
+                $config['encrypt_name'] = TRUE;
+
+                $this->load->library('upload', $config);
+
+                if ($this->upload->do_upload('image')) {
+                    $upload_data = $this->upload->data();
+                    $image_path = 'uploads/news_images/' . $upload_data['file_name'];
+                } else {
+                    $data['upload_error'] = $this->upload->display_errors();
+                    $this->edit_news_form($id);
+                    return;
+                }
+            }
+
+            $news_data = [
+                'title' => $title,
+                'content' => $content,
+                'category_id' => $category_id,
+                // 'tag_id' => $tag_id,
+                'updated_at' => date('Y-m-d H:i:s'),
+            ];
+
+            if ($image_path) {
+                $news_data['image'] = $image_path;
+            }
+
+            $this->load->model('News_model');
+            $updated = $this->News_model->update_news($id, $news_data, $tag_id);
+
+            if ($updated) {
+                $this->session->set_flashdata('success', 'News article updated successfully.');
+                // redirect('dashboard');
+            } else {
+                $this->session->set_flashdata('error', 'Failed to update the news article.');
+                // redirect('journalist/edit_news_form/' . $id);
+            }
+
+            redirect('news/view_news/' . $id);
+        }
+    }
+
+
+    // Delete a news article by journalist
+    public function delete_news_article($id)
+    {
+        if ($this->News_model->delete_news_article($id)) {
+            $this->session->set_flashdata('success', 'News article deleted successfully.');
+        } else {
+            $this->session->set_flashdata('error', 'Failed to delete news article.');
+        }
+        redirect('dashboard');
     }
 
     // View single news for reviewing by editor

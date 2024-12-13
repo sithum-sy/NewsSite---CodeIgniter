@@ -1,5 +1,10 @@
 <div class="container admin-dashboard">
-    <h2 class="my-4">Manage News Articles</h2>
+    <div class="row mb-4">
+        <div class="col text-start">
+            <h1 class="dashboard-heading">Editor Dashboard</h1>
+        </div>
+    </div>
+    <h3 class="my-4">Manage News Articles</h3>
     <?php if ($this->session->flashdata('success')): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             <?php echo $this->session->flashdata('success'); ?>

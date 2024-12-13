@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NewsSite</title>
+    <title>X-News</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
@@ -152,6 +152,16 @@
             .header-buttons a {
                 display: none;
             }
+        }
+
+        .dashboard-heading {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
     </style>
 </head>

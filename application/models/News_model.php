@@ -12,6 +12,7 @@ class News_model extends CI_Model
     public function get_published_news()
     {
         $this->db->where('status', 'published');
+        $this->db->where('deleted_at IS NULL');
         $this->db->order_by('created_at', 'DESC');
         $query = $this->db->get('news_articles');
 
@@ -47,6 +48,7 @@ class News_model extends CI_Model
         $this->db->select('news_articles.*, categories.category as category');
         $this->db->from('news_articles');
         $this->db->where('news_articles.journalist_id', $journalist_id);
+        $this->db->where('deleted_at IS NULL');
         $this->db->join('categories', 'news_articles.category_id = categories.id', 'INNER');
         $this->db->order_by('news_articles.created_at', 'DESC');
 
@@ -77,12 +79,45 @@ class News_model extends CI_Model
         $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
         $this->db->join('tags', 'news_articles.tag_id = tags.id', 'left');
         $this->db->where('news_articles.id', $id);
-        $this->db->group_by('news_articles.id');
+        // $this->db->group_by('news_articles.id');
         $query = $this->db->get();
 
         return [
             'result' => $query->row_array(),
         ];
+    }
+
+    public function update_news($id, $news_data, $tag_id = [])
+    {
+        $this->db->trans_start();
+
+        $this->db->where('id', $id);
+        $this->db->update('news_articles', $news_data);
+
+        // if (!empty($tag_id)) {
+        //     $this->db->where('news_article_id', $id);
+        //     $this->db->delete('news_article_tags');
+
+        //     // Insert new tags
+        //     foreach ($tag_ids as $tag_id) {
+        //         $this->db->insert('news_article_tags', [
+        //             'news_article_id' => $id,
+        //             'tag_id' => $tag_id,
+        //         ]);
+        //     }
+        // }
+
+        $this->db->trans_complete();
+
+        return $this->db->trans_status();
+    }
+
+
+    // Delete a news article by journalist
+    public function delete_news_article($id)
+    {
+        $this->db->where('id', $id);
+        return $this->db->update('news_articles', ['deleted_at' => date('Y-m-d H:i:s')]);
     }
 
     // View all news articles in editor-dashboard

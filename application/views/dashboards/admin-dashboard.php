@@ -1,5 +1,10 @@
 <!-- Main Dashboard Content -->
 <div class="container-fluid px-3 admin-dashboard">
+    <div class="row mb-4">
+        <div class="col text-start">
+            <h1 class="dashboard-heading">Admin Dashboard</h1>
+        </div>
+    </div>
     <div class="row">
         <!-- Create User Section -->
         <div class="col-md-2 create-user-section mb-4">
@@ -73,7 +78,7 @@
                                                 <a href="<?= site_url('users/edit_user/' . $user['id']); ?>" class="btn btn-warning btn-sm" title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <a href="<?= site_url('users/delete_user/' . $user['id']); ?>" class="btn btn-danger btn-sm" title="Delete">
+                                                <a href="<?= site_url('users/delete_user/' . $user['id']); ?>" class="btn btn-danger btn-sm" title="Delete" onClick="if(!confirm('Are you sure?')) { event.preventDefault(); }">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                                 <form action="<?= site_url('users/toggle_user_status/' . $user['id']); ?>" method="post" style="display:inline;">
