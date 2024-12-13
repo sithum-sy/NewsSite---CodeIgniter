@@ -53,7 +53,9 @@ class News extends CI_Controller
         $data['categories'] = $this->News_model->get_all_categories();
         $data['tags'] = $this->News_model->get_all_tags();
 
+        $this->load->view('templates/header');
         $this->load->view('news/create', $data);
+        $this->load->view('templates/footer');
     }
 
     // Store a news by journalist
@@ -118,7 +120,9 @@ class News extends CI_Controller
             'news_item' => $news_item['result'],
         ];
 
+        $this->load->view('templates/header');
         $this->load->view('dashboards/journalist/view_news', $data);
+        $this->load->view('templates/footer');
     }
 
     // View single news for reviewing by editor
@@ -135,7 +139,9 @@ class News extends CI_Controller
             show_404();
         }
 
+        $this->load->view('templates/header');
         $this->load->view('dashboards/editor/review_news', $data);
+        $this->load->view('templates/footer');
     }
 
 
@@ -210,5 +216,20 @@ class News extends CI_Controller
         } else {
             echo json_encode([]);
         }
+    }
+
+    // Get news viewed accroding to their category
+    public function view_category($category)
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
+
+        $data['news'] = $this->News_model->get_all_news_by_category($category);
+        $data['category'] = ucfirst($category);
+
+        $this->load->view('templates/header');
+        $this->load->view('pages/news_categories', $data);
+        $this->load->view('templates/footer');
     }
 }

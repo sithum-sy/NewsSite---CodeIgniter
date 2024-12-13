@@ -53,7 +53,6 @@ $route['home'] = 'news/view';
 $route['about'] = 'pages/view/about';
 $route['contact'] = 'pages/view/contact';
 
-
 $route['login'] = 'users/login';
 $route['logout'] = 'users/logout';
 $route['dashboard'] = 'users/view';
@@ -67,7 +66,8 @@ $route['news/(:any)'] = 'news/view_single/$1';
 // $route['news'] = 'news';
 $route['news'] = 'news/fetch_latest_headline';
 // $route['news/fetch_news'] = 'news/fetch_news';
-// $route['(:any)'] = 'pages/view/$1';
+$route['news/category/(:any)'] = 'news/view_category/$1';
+
 
 $route['journalist/news/(:num)'] = 'news/view_news/$1';
 $route['journalist/publish/(:num)'] = 'news/publish/$1';
@@ -76,4 +76,4 @@ $route['editor/news/review'] = 'news/review_news_article';
 $route['editor/news/download_pdf/(:num)'] = 'news/download_pdf/$1';
 
 
-$route['default_controller'] = 'pages/view';
+$route['default_controller'] = 'news/view';

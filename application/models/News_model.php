@@ -146,4 +146,18 @@ class News_model extends CI_Model
         $this->db->limit($limit);
         return $this->db->get()->result_array();
     }
+
+    // Get news by categories in homepage
+    public function get_all_news_by_category($category_name)
+    {
+        $this->db->select('news_articles.*, categories.category as category_name');
+        $this->db->from('news_articles');
+        $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
+        $this->db->where('status', 'published');
+        $this->db->where('categories.category', $category_name);
+        $this->db->order_by('created_at', 'DESC');
+        $query = $this->db->get();
+
+        return $query->result_array();
+    }
 }

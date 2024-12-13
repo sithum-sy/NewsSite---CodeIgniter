@@ -89,10 +89,8 @@ class Users extends CI_Controller
             show_404();
         }
 
-        // Initialize the data array
         $data = [];
 
-        // Populate data based on role
         $role_id = $this->session->userdata('role_id');
         $user_id = $this->session->userdata('user_id');
 
@@ -115,15 +113,17 @@ class Users extends CI_Controller
                 break;
         }
 
+        $this->load->view('templates/header');
         $this->load->view('dashboards/' . $page, $data);
+        $this->load->view('templates/footer');
     }
 
     // View register form in admin dashboard and in homepage for new readers
     public function load_register()
     {
         if ($this->session->userdata('logged_in')) {
-            // Check if the user is an admin (assuming 'role' is stored in session)
-            $role_id = $this->session->userdata('role_id'); // Adjust according to your session data structure
+            // Check if the user is an admin 
+            $role_id = $this->session->userdata('role_id');
 
             if ($role_id == 1) {
                 // If admin, load the register page for admin
@@ -160,7 +160,6 @@ class Users extends CI_Controller
             'matches' => 'Passwords do not match.'
         ));
 
-        // Check if the user is logged in
         if ($this->session->userdata('logged_in')) {
             $role_id = $this->session->userdata('role_id');
         } else {
@@ -218,7 +217,9 @@ class Users extends CI_Controller
     {
         $data['user'] = $this->User_model->get_user_by_id($user_id);
 
-        $this->load->view('dashboards/view_user', $data);
+        $this->load->view('templates/header');
+        $this->load->view('dashboards/admin/view_user', $data);
+        $this->load->view('templates/footer');
     }
 
     // View edit form of a single user by admin
@@ -227,7 +228,9 @@ class Users extends CI_Controller
         $data['user'] = $this->User_model->get_user_by_id($id);
         $data['roles'] = $this->User_model->get_roles();
 
-        $this->load->view('dashboards/edit_user', $data);
+        $this->load->view('templates/header');
+        $this->load->view('dashboards/admin/edit_user', $data);
+        $this->load->view('templates/footer');
     }
 
     // Upadte edited data by admin
