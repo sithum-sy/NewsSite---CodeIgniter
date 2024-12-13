@@ -35,7 +35,7 @@
                         <td><?php echo $article['first_name'] . ' ' . $article['last_name']; ?></td>
                         <td><?php echo $article['updated_at']; ?></td>
                         <td>
-                            <span class="badge bg-<?php echo ($article['status'] == 'pending') ? 'warning' : (($article['status'] == 'approved') ? 'success' : 'danger'); ?>">
+                            <span class="badge bg-<?php echo ($article['status'] == 'pending') ? 'warning' : (($article['status'] == 'approved') ? 'success' : (($article['status'] == 'published') ? 'info' : 'danger')); ?>">
                                 <?php echo ucfirst($article['status']); ?>
                             </span>
                         </td>

@@ -39,7 +39,7 @@
                                         <td><?php echo $article['title']; ?></td>
                                         <td><?php echo $article['category']; ?></td>
                                         <td>
-                                            <span class="badge bg-<?php echo ($article['status'] === 'pending') ? 'warning' : (($article['status'] === 'approved') ? 'primary' : 'success'); ?>">
+                                            <span class="badge bg-<?php echo ($article['status'] === 'pending') ? 'warning' : (($article['status'] === 'approved') ? 'info' : (($article['status'] === 'published') ? 'success' : 'danger')); ?>">
                                                 <?php echo ucfirst($article['status']); ?>
                                             </span>
                                         </td>

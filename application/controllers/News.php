@@ -117,7 +117,7 @@ class News extends CI_Controller
         }
 
         $data = [
-            'news_item' => $news_item['result'],
+            'news_item' => $news_item,
         ];
 
         $this->load->view('templates/header');
@@ -141,7 +141,7 @@ class News extends CI_Controller
         }
 
         $data = [
-            'news_item' => $news_item['result'],
+            'news_item' => $news_item,
             'categories' => $categories,
             'tags' => $tags,
         ];

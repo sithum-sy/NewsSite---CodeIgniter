@@ -11,28 +11,26 @@ class News_model extends CI_Model
     // View published news in the Homepage
     public function get_published_news()
     {
-        $this->db->where('status', 'published');
-        $this->db->where('deleted_at IS NULL');
-        $this->db->order_by('created_at', 'DESC');
-        $query = $this->db->get('news_articles');
-
-        return $query->result_array();
+        return $this->db->where('status', 'published')
+            ->where('deleted_at IS NULL')
+            ->order_by('created_at', 'DESC')
+            ->get('news_articles')
+            ->result_array();
     }
 
     // View a single published news by logged in reader
     public function get_news_by_slug($slug)
     {
-        $this->db->select('news_articles.*, categories.category as category_name, 
-            users.first_name as first_name, users.last_name as last_name, GROUP_CONCAT(tags.tag) as tag_names');
-        $this->db->from('news_articles');
-        $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
-        $this->db->join('tags', 'news_articles.tag_id = tags.id', 'left');
-        $this->db->join('users', 'news_articles.journalist_id = users.id', 'left');
-        $this->db->where('news_articles.slug', $slug);
-        $this->db->group_by('news_articles.id');
-        $query = $this->db->get();
-
-        return $query->row_array();
+        return $this->db->select('news_articles.*, categories.category as category_name, 
+                              users.first_name, users.last_name, GROUP_CONCAT(tags.tag) as tag_names')
+            ->from('news_articles')
+            ->join('categories', 'news_articles.category_id = categories.id', 'left')
+            ->join('tags', 'news_articles.tag_id = tags.id', 'left')
+            ->join('users', 'news_articles.journalist_id = users.id', 'left')
+            ->where('news_articles.slug', $slug)
+            ->group_by('news_articles.id')
+            ->get()
+            ->row_array();
     }
 
 
@@ -45,16 +43,14 @@ class News_model extends CI_Model
     // View news written by a journalist
     public function get_articles_by_journalist($journalist_id)
     {
-        $this->db->select('news_articles.*, categories.category as category');
-        $this->db->from('news_articles');
-        $this->db->where('news_articles.journalist_id', $journalist_id);
-        $this->db->where('deleted_at IS NULL');
-        $this->db->join('categories', 'news_articles.category_id = categories.id', 'INNER');
-        $this->db->order_by('news_articles.created_at', 'DESC');
-
-        $query = $this->db->get();
-
-        return $query->result_array();
+        return $this->db->select('news_articles.*, categories.category as category')
+            ->from('news_articles')
+            ->join('categories', 'news_articles.category_id = categories.id', 'inner')
+            ->where('news_articles.journalist_id', $journalist_id)
+            ->where('deleted_at IS NULL')
+            ->order_by('news_articles.created_at', 'DESC')
+            ->get()
+            ->result_array();
     }
 
     // Pull category list into add news form
@@ -74,18 +70,16 @@ class News_model extends CI_Model
     // View a single news from a journalist
     public function get_news_by_id($id)
     {
-        $this->db->select('news_articles.*, categories.category as category_name, GROUP_CONCAT(tags.tag SEPARATOR ", ") as tag_names');
-        $this->db->from('news_articles');
-        $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
-        $this->db->join('tags', 'news_articles.tag_id = tags.id', 'left');
-        $this->db->where('news_articles.id', $id);
-        // $this->db->group_by('news_articles.id');
-        $query = $this->db->get();
-
-        return [
-            'result' => $query->row_array(),
-        ];
+        return $this->db->select('news_articles.*, categories.category as category_name, GROUP_CONCAT(tags.tag SEPARATOR ", ") as tag_names')
+            ->from('news_articles')
+            ->join('categories', 'news_articles.category_id = categories.id', 'left')
+            ->join('tags', 'news_articles.tag_id = tags.id', 'left')
+            ->where('news_articles.id', $id)
+            ->group_by('news_articles.id')
+            ->get()
+            ->row_array();
     }
+
 
     public function update_news($id, $news_data, $tag_id = [])
     {
@@ -123,33 +117,30 @@ class News_model extends CI_Model
     // View all news articles in editor-dashboard
     public function get_submitted_news()
     {
-        $this->db->select('news_articles.*, categories.category as category_name, 
-            users.first_name as first_name, users.last_name as last_name, GROUP_CONCAT(tags.tag) as tag_names');
-        $this->db->from('news_articles');
-
-        $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
-        $this->db->join('users', 'news_articles.journalist_id = users.id', 'left');
-        $this->db->join('tags', 'news_articles.tag_id = tags.id', 'left');
-        // $this->db->where('news_articles.status', 'pending');
-        $this->db->order_by('updated_at', 'DESC');
-        $this->db->group_by('news_articles.id');
-        $query = $this->db->get();
-        return $query->result_array();
+        return $this->db->select('news_articles.*, categories.category as category_name, 
+            users.first_name, users.last_name, GROUP_CONCAT(tags.tag) as tag_names')
+            ->from('news_articles')
+            ->join('categories', 'news_articles.category_id = categories.id', 'left')
+            ->join('users', 'news_articles.journalist_id = users.id', 'left')
+            ->join('tags', 'news_articles.tag_id = tags.id', 'left')
+            ->group_by('news_articles.id')
+            ->order_by('updated_at', 'DESC')
+            ->get()
+            ->result_array();
     }
 
     // View single news article in review page by editor
     public function get_single_submitted_news($id)
     {
-        $this->db->select('news_articles.*, categories.category as category_name, 
-            users.first_name as first_name, users.last_name as last_name, GROUP_CONCAT(tags.tag) as tag_names');
-        $this->db->from('news_articles');
-        $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
-        $this->db->join('users', 'news_articles.journalist_id = users.id', 'left');
-        $this->db->join('tags', 'news_articles.tag_id = tags.id', 'left');
-        $this->db->where('news_articles.id', $id);
-        // $this->db->group_by('news_articles.id');
-        $query = $this->db->get();
-        return $query->row_array();
+        return $this->db->select('news_articles.*, categories.category as category_name, 
+            users.first_name, users.last_name, GROUP_CONCAT(tags.tag) as tag_names')
+            ->from('news_articles')
+            ->join('categories', 'news_articles.category_id = categories.id', 'left')
+            ->join('users', 'news_articles.journalist_id = users.id', 'left')
+            ->join('tags', 'news_articles.tag_id = tags.id', 'left')
+            ->where('news_articles.id', $id)
+            ->get()
+            ->row_array();
     }
 
     // Update the status of news_article after reviewed by editor
@@ -173,26 +164,25 @@ class News_model extends CI_Model
     // Get news headline for homepage
     public function get_latest_news($limit = 5)
     {
-        $this->db->select('title, created_at');
-        $this->db->from('news_articles');
-        $this->db->where('status', 'published');
-        $this->db->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-24 hours')));
-        $this->db->order_by('updated_at', 'DESC');
-        $this->db->limit($limit);
-        return $this->db->get()->result_array();
+        return $this->db->select('title, created_at')
+            ->from('news_articles')
+            ->where(['status' => 'published', 'deleted_at' => NULL])
+            ->where('updated_at >=', date('Y-m-d H:i:s', strtotime('-24 hours')))
+            ->order_by('updated_at', 'DESC')
+            ->limit($limit)
+            ->get()
+            ->result_array();
     }
 
     // Get news by categories in homepage
     public function get_all_news_by_category($category_name)
     {
-        $this->db->select('news_articles.*, categories.category as category_name');
-        $this->db->from('news_articles');
-        $this->db->join('categories', 'news_articles.category_id = categories.id', 'left');
-        $this->db->where('status', 'published');
-        $this->db->where('categories.category', $category_name);
-        $this->db->order_by('created_at', 'DESC');
-        $query = $this->db->get();
-
-        return $query->result_array();
+        return $this->db->select('news_articles.*, categories.category as category_name')
+            ->from('news_articles')
+            ->join('categories', 'news_articles.category_id = categories.id', 'left')
+            ->where(['status' => 'published', 'deleted_at' => NULL, 'categories.category' => $category_name])
+            ->order_by('created_at', 'DESC')
+            ->get()
+            ->result_array();
     }
 }

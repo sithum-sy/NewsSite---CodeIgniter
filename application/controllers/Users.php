@@ -29,7 +29,7 @@ class Users extends CI_Controller
         $this->load->view('templates/footer');
     }
 
-    // Method to log in after entering email and password
+    // Log in after entering email and password
     public function do_login()
     {
         $email = $this->input->post('email');
@@ -37,18 +37,25 @@ class Users extends CI_Controller
 
         $user = $this->User_model->get_user_by_email($email);
 
-        if ($user && password_verify($password, $user->password)) {
-            $this->session->set_userdata([
-                'user_id' => $user->id,
-                'role_id' => $user->role_id,
-                'logged_in' => TRUE
-            ]);
-            redirect('dashboard');
+        if ($user) {
+            if ($user->is_active == 0) {
+                $this->session->set_flashdata('error', 'Your account is deactivated. Please contact admin.');
+            } else if (password_verify($password, $user->password)) {
+                $this->session->set_userdata([
+                    'user_id' => $user->id,
+                    'role_id' => $user->role_id,
+                    'logged_in' => TRUE
+                ]);
+                redirect('dashboard');
+            } else {
+                $this->session->set_flashdata('error', 'Invalid email or password.');
+            }
         } else {
             $this->session->set_flashdata('error', 'Invalid email or password.');
-            redirect('login');
         }
+        redirect('login');
     }
+
 
     public function logout()
     {
@@ -122,7 +129,6 @@ class Users extends CI_Controller
     public function load_register()
     {
         if ($this->session->userdata('logged_in')) {
-            // Check if the user is an admin 
             $role_id = $this->session->userdata('role_id');
 
             if ($role_id == 1) {
@@ -196,7 +202,6 @@ class Users extends CI_Controller
                     redirect('dashboard');
                 }
 
-                // If the user is a reader, new session is created and is redirected them to the news homepage
                 if ($role_id == 4) {
                     $user_data = $this->User_model->get_user_by_email($this->input->post('email'));
                     $this->session->set_userdata('logged_in', TRUE);
