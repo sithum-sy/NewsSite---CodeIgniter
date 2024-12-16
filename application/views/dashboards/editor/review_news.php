@@ -19,6 +19,7 @@
             <p><strong>Journalist:</strong> <?php echo $news_item['first_name'] . ' ' . $news_item['last_name']; ?></p>
             <p><strong>Submission Date:</strong> <?php echo $news_item['updated_at']; ?></p>
             <hr>
+            <img src="<?= base_url($news_item['image']); ?>" class="img-fluid rounded mb-4" alt="News Image">
             <p class="card-text"><strong>Content:</strong></p>
             <p><?php echo $news_item['content']; ?></p>
             <hr>

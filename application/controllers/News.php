@@ -281,7 +281,6 @@ class News extends CI_Controller
 
     public function download_pdf($id)
     {
-        $this->load->model('News_model');
         $this->load->library('pdf');
 
         $data['news_item'] = $this->News_model->get_single_submitted_news($id);

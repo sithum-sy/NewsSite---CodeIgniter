@@ -26,15 +26,16 @@
     // Fetch headlines via AJAX
     function fetchHeadlines() {
         $.ajax({
-            url: '<?php echo site_url("news"); ?>',
+            url: '<?php echo site_url('news'); ?>',
             type: 'GET',
             dataType: 'json',
             success: function(data) {
+                console.log(data);
                 headlines = data; // Save the headlines
                 currentHeadlineIndex = 0; // Reset to the first headline
                 updateHeadline(); // Update the first headline immediately
 
-                // Rotate every 5 seconds
+                // Rotate every 10 seconds
                 setInterval(updateHeadline, 10000);
             },
             error: function() {
