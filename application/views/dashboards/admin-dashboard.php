@@ -16,6 +16,22 @@
                     </a>
                 </div>
             </div>
+            <div class="card mt-2">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Article Management</h4>
+                    <a href="<?php echo site_url('users/get_all_articles_report'); ?>" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus"></i> View Articles
+                    </a>
+                </div>
+            </div>
+            <div class="card mt-2">
+                <div class="card-body text-center">
+                    <h4 class="card-title">Journalist Management</h4>
+                    <a href="<?php echo site_url('users/get_all_journalists'); ?>" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus"></i> View Journalists
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- User Management Section -->

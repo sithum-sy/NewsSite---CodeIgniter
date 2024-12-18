@@ -11,7 +11,7 @@ class Users extends CI_Controller
         $this->load->model('User_model');
         $this->load->model('News_model');
         $this->load->library('session');
-        $this->load->helper(['url', 'form']);
+        $this->load->helper(['url_helper', 'form', 'text', 'url']);
         $this->load->library('form_validation');
     }
 
@@ -352,5 +352,105 @@ class Users extends CI_Controller
         $writer->save('php://output');
 
         exit();
+    }
+
+    // Get articles' report by admin
+    public function get_all_articles_report()
+    {
+        $data['news_articles'] = $this->News_model->get_submitted_news();
+
+
+        $this->load->view('templates/header');
+        $this->load->view('dashboards/admin/view_news_articles', $data);
+        $this->load->view('templates/footer');
+    }
+
+    // Get spreadsheet of news article data
+    public function export_news_articles_to_excel()
+    {
+        $this->load->model('News_model');
+
+        require_once FCPATH . 'vendor/autoload.php';  // Include autoload for PhpSpreadsheet
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $news_articles  = $this->News_model->get_submitted_news();
+
+        // Set header for Excel sheet
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Title');
+        $sheet->setCellValue('C1', 'Content');
+        $sheet->setCellValue('D1', 'Journalist');
+        $sheet->setCellValue('E1', 'Category');
+        $sheet->setCellValue('F1', 'Tags');
+        $sheet->setCellValue('G1', 'Submission Date');
+        $sheet->setCellValue('H1', 'Status');
+
+        // Fill in article data
+        $row = 2;
+        foreach ($news_articles as $article) {
+            $sheet->setCellValue('A' . $row, $article['id']);
+            $sheet->setCellValue('B' . $row, $article['title']);
+            $sheet->setCellValue('C' . $row, $article['content']);
+            $sheet->setCellValue('D' . $row, $article['first_name'] . ' ' . $article['last_name']);
+            $sheet->setCellValue('E' . $row, $article['category_name']);
+            $sheet->setCellValue('F' . $row, $article['tag_names']);
+            $sheet->setCellValue('G' . $row, $article['updated_at']);
+            $sheet->setCellValue('H' . $row, $article['status']);
+            $row++;
+        }
+
+        // File properties and download
+        $filename = 'news_articles_list_' . date('Y-m-d_H-i-s') . '.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+
+        exit();
+    }
+
+    // Get pdf of news article data
+    public function export_news_articles_to_pdf()
+    {
+        $this->load->model('News_model');
+        $this->load->library('pdf');
+
+        // Fetch data for the table
+        $data['news_articles'] = $this->News_model->get_submitted_news();
+
+        // Load the view as HTML
+        $html = $this->load->view('dashboards/admin/news_articles_pdf', $data, true);
+
+        // // Load Dompdf
+        // require_once FCPATH . 'vendor/autoload.php';
+        // $dompdf = new \Dompdf\Dompdf();
+
+        // // Load HTML content into Dompdf
+        // $dompdf->loadHtml($html);
+
+        // // Set paper size and orientation (e.g., A4, landscape)
+        // $dompdf->setPaper('A4', 'landscape');
+
+        // // Render PDF
+        // $dompdf->render();
+
+        // // Output PDF to browser
+        // $dompdf->stream("news_articles_list_" . date('Y-m-d_H-i-s') . ".pdf", ["Attachment" => 1]);
+        $this->pdf->createPDF($html, 'news_articles_list_' . date('Y-m-d_H-i-s') . '.pdf');
+    }
+
+
+    // Get articles' report by admin
+    public function get_all_journalists()
+    {
+
+
+        $this->load->view('templates/header');
+        $this->load->view('dashboards/admin/view_all_journalists');
+        $this->load->view('templates/footer');
     }
 }

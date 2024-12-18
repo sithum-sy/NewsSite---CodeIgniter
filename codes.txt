@@ -13,6 +13,17 @@ ajax data pass to db and load data to db
 active/ inactive
 
 
+journal report
+name, article name, summary,  date, status
+
+article report
+name, article count
+
+filters by date and journalist name
+
+excel and pdf
+
+
 
 
  
