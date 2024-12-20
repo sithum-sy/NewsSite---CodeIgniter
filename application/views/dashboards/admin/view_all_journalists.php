@@ -1,7 +1,9 @@
 <div class="container-fluid admin-dashboard">
     <div class="row mb-4">
         <div class="col text-start">
-            <h1 class="dashboard-heading">Admin Dashboard</h1>
+            <a href="<?php echo site_url('dashboard'); ?>" class="dashboard-heading-link">
+                <h1 class="dashboard-heading">Admin Dashboard</h1>
+            </a>
         </div>
     </div>
     <div class="row">
@@ -35,10 +37,15 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="my-4">Journalists Report</h3>
                 <div>
-                    <a href="<?php echo site_url('users/export_journalists_to_excel'); ?>" class="btn btn-success me-2">
+                    <a href="<?php echo site_url('users/export_journalists_to_excel') .
+                                    ($this->input->get('journalist') ? '?journalist=' . urlencode($this->input->get('journalist')) : '') .
+                                    ($this->input->get('date') ? '&date=' . urlencode($this->input->get('date')) : ''); ?>"
+                        class="btn btn-success">
                         <i class="fas fa-file-excel"></i> Download Spreadsheet
                     </a>
-                    <a href="<?php echo site_url('users/export_journalists_to_pdf'); ?>" class="btn btn-warning">
+                    <a href="<?php echo site_url('users/export_journalists_to_pdf') .
+                                    ($this->input->get('journalist') ? '?journalist=' . urlencode($this->input->get('journalist')) : '') .
+                                    ($this->input->get('date') ? '&date=' . urlencode($this->input->get('date')) : ''); ?>" class="btn btn-warning">
                         <i class="fas fa-file-pdf"></i> Download PDF
                     </a>
                 </div>

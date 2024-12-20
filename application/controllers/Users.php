@@ -377,13 +377,23 @@ class Users extends CI_Controller
         }
 
         // Get filter values from GET request
-        $title = $this->input->get('title');
-        $journalist = $this->input->get('journalist');
-        $category = $this->input->get('category');
-        $date = $this->input->get('date');
+        $filters = [];
+        if ($this->input->get('title')) {
+            $filters['title'] = $this->input->get('title');
+        }
+        if ($this->input->get('journalist')) {
+            $filters['journalist'] = $this->input->get('journalist');
+        }
+        if ($this->input->get('category')) {
+            $filters['category'] = $this->input->get('category');
+        }
+        if ($this->input->get('date')) {
+            $filters['date'] = $this->input->get('date');
+        }
 
-        $data['news_articles'] = $this->News_model->filter_news_articles($title, $journalist, $category, $date);
+        $data['news_articles'] = $this->News_model->filter_news_articles($filters);
         $data['categories'] = $this->News_model->get_all_categories();
+
 
         $this->load->view('templates/header');
         $this->load->view('dashboards/admin/view_news_articles', $data);
@@ -397,10 +407,26 @@ class Users extends CI_Controller
 
         require_once FCPATH . 'vendor/autoload.php';  // Include autoload for PhpSpreadsheet
 
+        $filters = [];
+        if ($this->input->get('title')) {
+            $filters['title'] = $this->input->get('title');
+        }
+        if ($this->input->get('journalist')) {
+            $filters['journalist'] = $this->input->get('journalist');
+        }
+        if ($this->input->get('category')) {
+            $filters['category'] = $this->input->get('category');
+        }
+        if ($this->input->get('date')) {
+            $filters['date'] = $this->input->get('date');
+        }
+
+        $news_articles = $this->News_model->get_submitted_news($filters);
+
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $news_articles  = $this->News_model->get_submitted_news();
+        $news_articles  = $this->News_model->get_submitted_news($filters);
 
         // Set header for Excel sheet
         $sheet->setCellValue('A1', 'ID');
@@ -444,8 +470,22 @@ class Users extends CI_Controller
         $this->load->model('News_model');
         $this->load->library('pdf');
 
+        $filters = [];
+        if ($this->input->get('title')) {
+            $filters['title'] = $this->input->get('title');
+        }
+        if ($this->input->get('journalist')) {
+            $filters['journalist'] = $this->input->get('journalist');
+        }
+        if ($this->input->get('category')) {
+            $filters['category'] = $this->input->get('category');
+        }
+        if ($this->input->get('date')) {
+            $filters['date'] = $this->input->get('date');
+        }
+
         // Fetch data for the table
-        $data['news_articles'] = $this->News_model->get_submitted_news();
+        $data['news_articles'] = $this->News_model->get_submitted_news($filters);
 
         // Load the view as HTML
         $html = $this->load->view('dashboards/admin/news_articles_pdf', $data, true);
@@ -469,7 +509,7 @@ class Users extends CI_Controller
     }
 
 
-    // Get articles' report by admin
+    // Get journalists report by admin
     public function get_all_journalists()
     {
         if (!$this->session->userdata('logged_in')) {
@@ -497,10 +537,20 @@ class Users extends CI_Controller
 
         require_once FCPATH . 'vendor/autoload.php';  // Include autoload for PhpSpreadsheet
 
+        // Get filter parameters if any
+        $filters = [];
+        if ($this->input->get('journalist')) {
+            $filters['journalist'] = $this->input->get('journalist');
+        }
+        if ($this->input->get('date')) {
+            $filters['date'] = $this->input->get('date');
+        }
+
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        $journalists  = $this->News_model->get_journalists_report();
+        // Pass filters to get filtered journalists
+        $journalists  = $this->News_model->get_journalists_report($filters);
 
         // Set header for Excel sheet
         $sheet->setCellValue('A1', 'ID');
@@ -515,7 +565,7 @@ class Users extends CI_Controller
             $sheet->setCellValue('A' . $row, $journalist['id']);
             $sheet->setCellValue('B' . $row, $journalist['first_name'] . ' ' . $journalist['last_name']);
             $sheet->setCellValue('C' . $row, $journalist['article_count']);
-            $sheet->setCellValue('C' . $row, $journalist['latest_submission_date']);
+            $sheet->setCellValue('D' . $row, $journalist['latest_submission_date']);
             $sheet->setCellValue('E' . $row, $journalist['is_active']);
             $row++;
         }
@@ -532,33 +582,27 @@ class Users extends CI_Controller
         exit();
     }
 
-    // Get pdf of news article data
+
+    // Get pdf of journalists data
     public function export_journalists_to_pdf()
     {
         $this->load->model('News_model');
         $this->load->library('pdf');
 
+        $filters = [];
+        if ($this->input->get('journalist')) {
+            $filters['journalist'] = $this->input->get('journalist');
+        }
+        if ($this->input->get('date')) {
+            $filters['date'] = $this->input->get('date');
+        }
+
         // Fetch data for the table
-        $data['journalists'] = $this->News_model->get_journalists_report();
+        $data['journalists'] = $this->News_model->get_journalists_report($filters);
 
         // Load the view as HTML
         $html = $this->load->view('dashboards/admin/journalists_pdf', $data, true);
 
-        // // Load Dompdf
-        // require_once FCPATH . 'vendor/autoload.php';
-        // $dompdf = new \Dompdf\Dompdf();
-
-        // // Load HTML content into Dompdf
-        // $dompdf->loadHtml($html);
-
-        // // Set paper size and orientation (e.g., A4, landscape)
-        // $dompdf->setPaper('A4', 'landscape');
-
-        // // Render PDF
-        // $dompdf->render();
-
-        // // Output PDF to browser
-        // $dompdf->stream("news_articles_list_" . date('Y-m-d_H-i-s') . ".pdf", ["Attachment" => 1]);
         $this->pdf->createPDF($html, 'journalists_list_' . date('Y-m-d_H-i-s') . '.pdf');
     }
 }

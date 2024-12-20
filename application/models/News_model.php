@@ -187,11 +187,12 @@ class News_model extends CI_Model
     }
 
     // Filter news articles based on the search 
-    public function filter_news_articles($title = '', $journalist = '', $category = '', $date = '')
+    public function filter_news_articles($filters = [])
     {
         $this->db->select('news_articles.*, categories.category as category_name, 
                            users.first_name, users.last_name, GROUP_CONCAT(tags.tag) as tag_names')
             ->from('news_articles')
+            ->where('news_articles.deleted_at', NULL)
             ->join('categories', 'news_articles.category_id = categories.id', 'left')
             ->join('users', 'news_articles.journalist_id = users.id', 'left')
             ->join('tags', 'news_articles.tag_id = tags.id', 'left')
@@ -199,20 +200,20 @@ class News_model extends CI_Model
             ->order_by('updated_at', 'DESC');
 
         // Apply filters if set
-        if (!empty($title)) {
-            $this->db->like('news_articles.title', $title);
+        if (!empty($filters['title'])) {
+            $this->db->like('news_articles.title', $filters['title']);
         }
 
-        if (!empty($journalist)) {
-            $this->db->like('CONCAT(users.first_name, " ", users.last_name)', $journalist);
+        if (!empty($filters['journalist'])) {
+            $this->db->like('CONCAT(users.first_name, " ", users.last_name)', $filters['journalist']);
         }
 
-        if (!empty($category)) {
-            $this->db->where('news_articles.category_id', $category);
+        if (!empty($filters['category'])) {
+            $this->db->where('news_articles.category_id', $filters['category']);
         }
 
-        if (!empty($date)) {
-            $this->db->where('DATE(news_articles.updated_at)', $date);
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(news_articles.updated_at)', $filters['date']);
         }
 
         return $this->db->get()->result_array();

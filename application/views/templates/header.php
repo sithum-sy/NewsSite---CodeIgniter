@@ -163,6 +163,10 @@
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
+
+        .dashboard-heading-link {
+            text-decoration: none;
+        }
     </style>
 </head>
 

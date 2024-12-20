@@ -1,7 +1,9 @@
 <div class="container-fluid admin-dashboard">
     <div class="row mb-4">
         <div class="col text-start">
-            <h1 class="dashboard-heading">Admin Dashboard</h1>
+            <a href="<?php echo site_url('dashboard'); ?>" class="dashboard-heading-link">
+                <h1 class="dashboard-heading">Admin Dashboard</h1>
+            </a>
         </div>
     </div>
     <div class="row">
@@ -50,13 +52,29 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h3 class="my-4">Manage News Articles</h3>
                 <div>
-                    <a href="<?php echo site_url('users/export_news_articles_to_excel'); ?>" class="btn btn-success me-2">
-                        <i class="fas fa-file-excel"></i> Download Spreadsheet
-                    </a>
-                    <a href="<?php echo site_url('users/export_news_articles_to_pdf'); ?>" class="btn btn-warning">
-                        <i class="fas fa-file-pdf"></i> Download PDF
-                    </a>
+                    <!-- Form for Excel download -->
+                    <form action="<?php echo site_url('users/export_news_articles_to_excel'); ?>" method="post" style="display:inline;">
+                        <input type="hidden" name="title" value="<?php echo $this->input->get('title'); ?>">
+                        <input type="hidden" name="journalist" value="<?php echo $this->input->get('journalist'); ?>">
+                        <input type="hidden" name="category" value="<?php echo $this->input->get('category'); ?>">
+                        <input type="hidden" name="date" value="<?php echo $this->input->get('date'); ?>">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-file-excel"></i> Download Spreadsheet
+                        </button>
+                    </form>
+
+                    <!-- Form for PDF download -->
+                    <form action="<?php echo site_url('users/export_news_articles_to_pdf'); ?>" method="post" style="display:inline;">
+                        <input type="hidden" name="title" value="<?php echo $this->input->get('title'); ?>">
+                        <input type="hidden" name="journalist" value="<?php echo $this->input->get('journalist'); ?>">
+                        <input type="hidden" name="category" value="<?php echo $this->input->get('category'); ?>">
+                        <input type="hidden" name="date" value="<?php echo $this->input->get('date'); ?>">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-file-pdf"></i> Download PDF
+                        </button>
+                    </form>
                 </div>
+
             </div>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped">
