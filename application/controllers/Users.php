@@ -357,8 +357,33 @@ class Users extends CI_Controller
     // Get articles' report by admin
     public function get_all_articles_report()
     {
-        $data['news_articles'] = $this->News_model->get_submitted_news();
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
 
+        $data['news_articles'] = $this->News_model->get_submitted_news();
+        $data['categories'] = $this->News_model->get_all_categories();
+
+        $this->load->view('templates/header');
+        $this->load->view('dashboards/admin/view_news_articles', $data);
+        $this->load->view('templates/footer');
+    }
+
+    // Search and filter articles
+    public function filter_news_articles()
+    {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
+
+        // Get filter values from GET request
+        $title = $this->input->get('title');
+        $journalist = $this->input->get('journalist');
+        $category = $this->input->get('category');
+        $date = $this->input->get('date');
+
+        $data['news_articles'] = $this->News_model->filter_news_articles($title, $journalist, $category, $date);
+        $data['categories'] = $this->News_model->get_all_categories();
 
         $this->load->view('templates/header');
         $this->load->view('dashboards/admin/view_news_articles', $data);
@@ -447,10 +472,93 @@ class Users extends CI_Controller
     // Get articles' report by admin
     public function get_all_journalists()
     {
+        if (!$this->session->userdata('logged_in')) {
+            redirect('login');
+        }
 
+        $filters = [];
+        if ($this->input->get('journalist')) {
+            $filters['journalist'] = $this->input->get('journalist');
+        }
+        if ($this->input->get('date')) {
+            $filters['date'] = $this->input->get('date');
+        }
+
+        $data['journalists'] = $this->News_model->get_journalists_report($filters);
 
         $this->load->view('templates/header');
-        $this->load->view('dashboards/admin/view_all_journalists');
+        $this->load->view('dashboards/admin/view_all_journalists', $data);
         $this->load->view('templates/footer');
+    }
+
+    public function export_journalists_to_excel()
+    {
+        $this->load->model('News_model');
+
+        require_once FCPATH . 'vendor/autoload.php';  // Include autoload for PhpSpreadsheet
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $journalists  = $this->News_model->get_journalists_report();
+
+        // Set header for Excel sheet
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Journalist');
+        $sheet->setCellValue('C1', 'Article Count');
+        $sheet->setCellValue('D1', 'Latest Submission Date');
+        $sheet->setCellValue('E1', 'Status');
+
+        // Fill in article data
+        $row = 2;
+        foreach ($journalists as $journalist) {
+            $sheet->setCellValue('A' . $row, $journalist['id']);
+            $sheet->setCellValue('B' . $row, $journalist['first_name'] . ' ' . $journalist['last_name']);
+            $sheet->setCellValue('C' . $row, $journalist['article_count']);
+            $sheet->setCellValue('C' . $row, $journalist['latest_submission_date']);
+            $sheet->setCellValue('E' . $row, $journalist['is_active']);
+            $row++;
+        }
+
+        // File properties and download
+        $filename = 'journalists_list_' . date('Y-m-d_H-i-s') . '.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+
+        exit();
+    }
+
+    // Get pdf of news article data
+    public function export_journalists_to_pdf()
+    {
+        $this->load->model('News_model');
+        $this->load->library('pdf');
+
+        // Fetch data for the table
+        $data['journalists'] = $this->News_model->get_journalists_report();
+
+        // Load the view as HTML
+        $html = $this->load->view('dashboards/admin/journalists_pdf', $data, true);
+
+        // // Load Dompdf
+        // require_once FCPATH . 'vendor/autoload.php';
+        // $dompdf = new \Dompdf\Dompdf();
+
+        // // Load HTML content into Dompdf
+        // $dompdf->loadHtml($html);
+
+        // // Set paper size and orientation (e.g., A4, landscape)
+        // $dompdf->setPaper('A4', 'landscape');
+
+        // // Render PDF
+        // $dompdf->render();
+
+        // // Output PDF to browser
+        // $dompdf->stream("news_articles_list_" . date('Y-m-d_H-i-s') . ".pdf", ["Attachment" => 1]);
+        $this->pdf->createPDF($html, 'journalists_list_' . date('Y-m-d_H-i-s') . '.pdf');
     }
 }

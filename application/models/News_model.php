@@ -185,4 +185,58 @@ class News_model extends CI_Model
             ->get()
             ->result_array();
     }
+
+    // Filter news articles based on the search 
+    public function filter_news_articles($title = '', $journalist = '', $category = '', $date = '')
+    {
+        $this->db->select('news_articles.*, categories.category as category_name, 
+                           users.first_name, users.last_name, GROUP_CONCAT(tags.tag) as tag_names')
+            ->from('news_articles')
+            ->join('categories', 'news_articles.category_id = categories.id', 'left')
+            ->join('users', 'news_articles.journalist_id = users.id', 'left')
+            ->join('tags', 'news_articles.tag_id = tags.id', 'left')
+            ->group_by('news_articles.id')
+            ->order_by('updated_at', 'DESC');
+
+        // Apply filters if set
+        if (!empty($title)) {
+            $this->db->like('news_articles.title', $title);
+        }
+
+        if (!empty($journalist)) {
+            $this->db->like('CONCAT(users.first_name, " ", users.last_name)', $journalist);
+        }
+
+        if (!empty($category)) {
+            $this->db->where('news_articles.category_id', $category);
+        }
+
+        if (!empty($date)) {
+            $this->db->where('DATE(news_articles.updated_at)', $date);
+        }
+
+        return $this->db->get()->result_array();
+    }
+
+    public function get_journalists_report($filters = [])
+    {
+        $this->db->select('users.*, COUNT(news_articles.id) as article_count, MAX(news_articles.updated_at) as latest_submission_date');
+        $this->db->from('users');
+        $this->db->where('role_id', 3);
+        $this->db->where('users.deleted_at', null);
+        $this->db->join('news_articles', 'news_articles.journalist_id = users.id', 'left');
+        $this->db->group_by('users.id');
+
+        if (!empty($filters['journalist'])) {
+            $this->db->like('users.first_name', $filters['journalist']);
+            $this->db->or_like('users.last_name', $filters['journalist']);
+        }
+
+        if (!empty($filters['date'])) {
+            $this->db->where('DATE(news_articles.updated_at)', $filters['date']);
+        }
+
+        $query = $this->db->get();
+        return $query->result_array();
+    }
 }

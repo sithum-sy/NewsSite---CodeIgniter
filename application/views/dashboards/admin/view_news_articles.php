@@ -13,41 +13,38 @@
                 </div>
                 <div class="card-body">
                     <form method="GET" action="<?php echo site_url('users/filter_news_articles'); ?>">
-                        <!-- Filter by Name -->
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
                             <input type="text" name="title" id="title" class="form-control" placeholder="Search by title">
                         </div>
-                        <!-- Filter by Journalist -->
                         <div class="mb-3">
                             <label for="journalist" class="form-label">Journalist</label>
                             <input type="text" name="journalist" id="journalist" class="form-control" placeholder="Search by journalist">
                         </div>
-                        <!-- Filter by Category -->
                         <div class="mb-3">
                             <label for="category" class="form-label">Category</label>
                             <select name="category" id="category" class="form-select">
                                 <option value="">Select category</option>
                                 <?php foreach ($categories as $category): ?>
                                     <option value="<?php echo $category['id']; ?>">
-                                        <?php echo $category['category_name']; ?>
+                                        <?php echo $category['category']; ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <!-- Filter by Date -->
                         <div class="mb-3">
                             <label for="date" class="form-label">Submission Date</label>
                             <input type="date" name="date" id="date" class="form-control">
                         </div>
-                        <!-- Filter Button -->
-                        <div class="text-end">
+                        <div class="d-flex justify-content-between">
                             <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a href="<?php echo site_url('users/get_all_articles_report'); ?>" class="btn btn-secondary">Remove Filters</a>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+
         <!-- Main content: Table and heading -->
         <div class="col-md-9">
             <div class="d-flex justify-content-between align-items-center mb-4">
