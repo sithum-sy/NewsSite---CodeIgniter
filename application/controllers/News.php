@@ -11,7 +11,7 @@ class News extends CI_Controller
     }
 
     // Get all news articles to Homepage
-    public function view()
+    public function index()
     {
         $data['news'] = $this->News_model->get_published_news();
 
@@ -19,10 +19,66 @@ class News extends CI_Controller
             show_404();
         }
 
-        $this->load->view('templates/header', $data);
+
+        // // Configuration for pagination
+        // $config['base_url'] = site_url('news/index');
+        // $config['total_rows'] = $this->News_model->get_total_news();
+        // $config['per_page'] = 9; // Number of news items per page
+
+        // // Bootstrap 4 pagination styling
+        // $config['full_tag_open'] = '<ul class="pagination">';
+        // $config['full_tag_close'] = '</ul>';
+        // $config['first_link'] = '&laquo;';
+        // $config['first_tag_open'] = '<li class="page-item">';
+        // $config['first_tag_close'] = '</li>';
+        // $config['last_link'] = '&raquo;';
+        // $config['last_tag_open'] = '<li class="page-item">';
+        // $config['last_tag_close'] = '</li>';
+        // $config['next_link'] = '&rsaquo;';
+        // $config['next_tag_open'] = '<li class="page-item">';
+        // $config['next_tag_close'] = '</li>';
+        // $config['prev_link'] = '&lsaquo;';
+        // $config['prev_tag_open'] = '<li class="page-item">';
+        // $config['prev_tag_close'] = '</li>';
+        // $config['cur_tag_open'] = '<li class="page-item active"><a class="page-link" href="#">';
+        // $config['cur_tag_close'] = '</a></li>';
+        // $config['num_tag_open'] = '<li class="page-item">';
+        // $config['num_tag_close'] = '</li>';
+        // $config['attributes'] = array('class' => 'page-link');
+
+        // $this->pagination->initialize($config);
+
+        // $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
+        // $data['news'] = $this->News_model->get_published_news($config['per_page'], $page);
+        // $data['pagination'] = $this->pagination->create_links();
+
+        $this->load->view('templates/header');
         $this->load->view('pages/home', $data);
         $this->load->view('templates/footer');
     }
+
+    // AJAX method to load news
+    // public function load_news()
+    // {
+    //     if (!$this->input->is_ajax_request()) {
+    //         exit('No direct script access allowed');
+    //     }
+
+    //     $page = $this->input->get('page') ? $this->input->get('page') : 0;
+    //     $per_page = 9;
+
+    //     $news = $this->News_model->get_published_news($per_page, $page);
+    //     $total_rows = $this->News_model->get_total_news();
+
+    //     $response = [
+    //         'news' => $news,
+    //         'total_pages' => ceil($total_rows / $per_page),
+    //         'current_page' => $page
+    //     ];
+
+    //     header('Content-Type: application/json');
+    //     echo json_encode($response);
+    // }
 
     // View a single published news by logged in reader
     public function view_single($slug)

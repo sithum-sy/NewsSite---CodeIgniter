@@ -18,6 +18,16 @@ class News_model extends CI_Model
             ->result_array();
     }
 
+    // public function get_published_news($limit, $start)
+    // {
+    //     return $this->db->limit($limit, $start)
+    //         ->where('status', 'published')
+    //         ->where('deleted_at IS NULL')
+    //         ->order_by('created_at', 'DESC')
+    //         ->get('news_articles')
+    //         ->result_array();
+    // }
+
     // View a single published news by logged in reader
     public function get_news_by_slug($slug)
     {
@@ -239,5 +249,10 @@ class News_model extends CI_Model
 
         $query = $this->db->get();
         return $query->result_array();
+    }
+
+    public function count_all_news()
+    {
+        return $this->db->count_all('news_articles');
     }
 }
